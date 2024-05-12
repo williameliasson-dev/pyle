@@ -1,4 +1,18 @@
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+
+#[derive(Serialize, Deserialize)]
+pub struct Transaction {
+    sender: String,
+    recipient: String,
+    signature: String,
+    amount: f32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct BlockData {
+    transactions: Option<Vec<Transaction>>,
+}
 
 pub struct Block {
     pub id: u32,
@@ -6,7 +20,7 @@ pub struct Block {
     pub prev_hash: String,
     pub timestamp: u64,
     pub nonce: u64,
-    pub data: String,
+    pub data: BlockData,
 }
 
 pub struct App {
@@ -25,7 +39,7 @@ impl App {
             prev_hash: "0".to_string(),
             timestamp: 0,
             nonce: 0,
-            data: "Genesis Block".to_string(),
+            data: BlockData { transactions: None },
         };
 
         self.blocks.push(genesis_block);
@@ -56,9 +70,14 @@ impl App {
         let mut hasher = Sha256::new();
         hasher.update(block_data_in_json.to_string().as_bytes());
     }
+
+    fn stake() {}
 }
 
 fn main() {
     let mut app = App::new();
-    app.generate_genesis_block()
+
+    if (app.blocks.len() < 1) {
+        app.generate_genesis_block()
+    }
 }
